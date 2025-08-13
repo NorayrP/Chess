@@ -35,13 +35,10 @@ const numberCol = document.createElement('div');
 numberCol.style.display = 'grid';
 numberCol.style.gridTemplateRows = 'repeat(8, 60px)';
 numberCol.style.position = 'absolute';
-numberCol.style.top = '0';
-numberCol.style.left = '-30px';
 numbers.forEach(number => {
     const cell = document.createElement('div');
     cell.style.textAlign = 'center';
     cell.style.lineHeight = '60px';
-    cell.style.width = '60px';
     cell.textContent = number;
     numberCol.appendChild(cell);
 });
@@ -54,6 +51,8 @@ boardContainer.style.gridTemplateRows = 'repeat(8, 60px)';
 boardContainer.style.width = '480px';
 boardContainer.style.border = '2px solid black';
 boardContainer.style.margin = '0 0 0 6px';
+boardContainer.style.position = 'relative';
+boardContainer.style.left = '15px';
 boardWrapper.appendChild(boardContainer);
 
 const startWhitePawnRow = 6;
@@ -128,7 +127,6 @@ for (let row = 0; row < 8; row++) {
                 }
                 else if (selectedSquare.textContent === pieces['p']) {
                     if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 1 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 1) { 
-                        debugger
                         if (!(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) + 1)) {
                             return;
                         }
@@ -313,6 +311,8 @@ const letterRow = document.createElement('div');
 letterRow.style.display = 'grid';
 letterRow.style.gridTemplateColumns = 'repeat(8, 60px)';
 letterRow.style.marginTop = '5px';
+letterRow.style.position = 'relative';
+letterRow.style.left = '20px';
 letters.forEach(letter => {
     const cell = document.createElement('div');
     cell.style.textAlign = 'center';
