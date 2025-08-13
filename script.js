@@ -1,3 +1,4 @@
+//helper values
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
 const numbers = [8, 7, 6, 5, 4, 3, 2, 1];
 
@@ -21,16 +22,28 @@ let selectedSquare = null;
 let lastMoved = null;
 let moveHistory = [];
 
+const startWhitePawnRow = 6;
+const startBlackPawnRow = 1;
+let hasWhiteKingMoved = false;
+let hasWhiteRookKingsideMoved = false;
+let hasWhiteRookQueensideMoved = false;
+let hasBlackKingMoved = false;
+let hasBlackRookKingsideMoved = false;
+let hasBlackRookQueensideMoved = false;
+
+//main container
 const gameContainer = document.createElement('div');
 gameContainer.style.display = 'flex';
 gameContainer.style.alignItems = 'flex-start';
 document.body.appendChild(gameContainer);
 
+//wrapper created to hold the chess board and the coordinates
 const boardWrapper = document.createElement('div');
 boardWrapper.style.position = 'relative';
 boardWrapper.style.display = 'inline-block';
 gameContainer.appendChild(boardWrapper);
 
+//number column
 const numberCol = document.createElement('div');
 numberCol.style.display = 'grid';
 numberCol.style.gridTemplateRows = 'repeat(8, 60px)';
@@ -44,6 +57,7 @@ numbers.forEach(number => {
 });
 boardWrapper.appendChild(numberCol);
 
+//chess board
 const boardContainer = document.createElement('div');
 boardContainer.style.display = 'grid';
 boardContainer.style.gridTemplateColumns = 'repeat(8, 60px)';
@@ -55,17 +69,7 @@ boardContainer.style.position = 'relative';
 boardContainer.style.left = '15px';
 boardWrapper.appendChild(boardContainer);
 
-const startWhitePawnRow = 6;
-const startBlackPawnRow = 1;
-
-let hasWhiteKingMoved = false;
-let hasWhiteRookKingsideMoved = false;
-let hasWhiteRookQueensideMoved = false;
-
-let hasBlackKingMoved = false;
-let hasBlackRookKingsideMoved = false;
-let hasBlackRookQueensideMoved = false;
-
+//board squares with pieces
 for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
         const square = document.createElement('div');
@@ -97,7 +101,9 @@ for (let row = 0; row < 8; row++) {
                     selectedSquare.style.outline = 'none';
                     selectedSquare = null;
                 }
+                //White pawn move
                 else if (selectedSquare.textContent === pieces['P']) {
+                    //taking black piece
                     if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 1 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 1) { 
                             if (!(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) - 1)) {
                             return;
@@ -107,6 +113,7 @@ for (let row = 0; row < 8; row++) {
                             return;
                         }
                     }
+                    //regular moves
                     if (square.dataset.col !== selectedSquare.dataset.col || checkBlackPiece(square) || checkWhitePiece(square)) {
                         return;
                     }
@@ -123,7 +130,9 @@ for (let row = 0; row < 8; row++) {
                     }
                     makeAMove(square, "White", toNotation);
                 }
+                //Black pawn move
                 else if (selectedSquare.textContent === pieces['p']) {
+                    //taking white piece
                     if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 1 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 1) { 
                         if (!(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) + 1)) {
                             return;
@@ -133,6 +142,7 @@ for (let row = 0; row < 8; row++) {
                             return;
                         }
                     }
+                    //regular moves
                     if (square.dataset.col !== selectedSquare.dataset.col || checkBlackPiece(square) || checkWhitePiece(square)) {
                         return;
                     }
@@ -149,6 +159,7 @@ for (let row = 0; row < 8; row++) {
                     }
                     makeAMove(square, "Black", toNotation);
                 }
+                //Rooks move
                 else if(selectedSquare.textContent === pieces['R'] || selectedSquare.textContent === pieces['r']) {
                     if(selectedSquare.dataset.row !== square.dataset.row && selectedSquare.dataset.col !== square.dataset.col)
                     {
@@ -174,6 +185,7 @@ for (let row = 0; row < 8; row++) {
                     }
                     makeAMove(square, selectedSquare.textContent === pieces['R'] ? "White" : "Black", toNotation);
                 }
+                //Knights move
                 else if(selectedSquare.textContent === pieces['N'] || selectedSquare.textContent === pieces['n']) {
                     if(square.textContent && ((checkWhitePiece(square) && selectedSquare.textContent === pieces['N']) || (checkBlackPiece(square) && selectedSquare.textContent === pieces['n']))) {
                         return;
@@ -210,6 +222,7 @@ for (let row = 0; row < 8; row++) {
                         return;
                     }
                 }
+                //Bishops move
                 else if(selectedSquare.textContent === pieces['B'] || selectedSquare.textContent === pieces['b']) {
                     const rowDiff = square.dataset.row > selectedSquare.dataset.row ? parseInt(square.dataset.row) - parseInt(selectedSquare.dataset.row) : parseInt(selectedSquare.dataset.row) - parseInt(square.dataset.row);
                     const colDiff = square.dataset.col > selectedSquare.dataset.col ? parseInt(square.dataset.col) - parseInt(selectedSquare.dataset.col) : parseInt(selectedSquare.dataset.col) - parseInt(square.dataset.col);
@@ -225,6 +238,7 @@ for (let row = 0; row < 8; row++) {
                         return;
                     }
                 }
+                //Queens move
                 else if(selectedSquare.textContent === pieces['Q'] || selectedSquare.textContent === pieces['q']) {
                     const rowDiff = square.dataset.row > selectedSquare.dataset.row ? parseInt(square.dataset.row) - parseInt(selectedSquare.dataset.row) : parseInt(selectedSquare.dataset.row) - parseInt(square.dataset.row);
                     const colDiff = square.dataset.col > selectedSquare.dataset.col ? parseInt(square.dataset.col) - parseInt(selectedSquare.dataset.col) : parseInt(selectedSquare.dataset.col) - parseInt(square.dataset.col);
@@ -241,7 +255,9 @@ for (let row = 0; row < 8; row++) {
                     }
                     makeAMove(square, selectedSquare.textContent === pieces['Q'] ? "White" : "Black", toNotation);
                 }
+                //Kings move
                 else if(selectedSquare.textContent === pieces['K'] || selectedSquare.textContent === pieces['k']) {
+                    //Castling
                     if(selectedSquare.textContent === pieces['K'] && fromNotation === "E1" && 
                         toNotation === "G1" && !hasWhiteKingMoved && !hasWhiteRookKingsideMoved && 
                         isPathClear(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col), parseInt(square.dataset.row), parseInt(square.dataset.col))) {
@@ -282,6 +298,7 @@ for (let row = 0; row < 8; row++) {
                         rookSquare.textContent = '';
                         return;
                     }
+                    //Regular moves
                     const rowDiff = square.dataset.row > selectedSquare.dataset.row ? parseInt(square.dataset.row) - parseInt(selectedSquare.dataset.row) : parseInt(selectedSquare.dataset.row) - parseInt(square.dataset.row);
                     const colDiff = square.dataset.col > selectedSquare.dataset.col ? parseInt(square.dataset.col) - parseInt(selectedSquare.dataset.col) : parseInt(selectedSquare.dataset.col) - parseInt(square.dataset.col);
                     if(rowDiff > 1 || colDiff > 1) {
@@ -305,6 +322,7 @@ for (let row = 0; row < 8; row++) {
     }
 }
 
+//letter row for the board
 const letterRow = document.createElement('div');
 letterRow.style.display = 'grid';
 letterRow.style.gridTemplateColumns = 'repeat(8, 60px)';
@@ -319,12 +337,14 @@ letters.forEach(letter => {
 });
 boardWrapper.appendChild(letterRow);
 
+//move history panel
 const historyPanel = document.createElement('div');
 historyPanel.style.marginLeft = '20px';
 historyPanel.style.width = '150px';
 historyPanel.style.fontFamily = 'monospace';
 gameContainer.appendChild(historyPanel);
 
+//helper functions
 function toChessNotation(row, col) {
     const file = letters[col];
     const rank = numbers[row];
