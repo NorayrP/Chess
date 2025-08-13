@@ -86,15 +86,13 @@ for (let row = 0; row < 8; row++) {
         }
 
         square.addEventListener('click', () => {
-            let fromNotation = "";
-            if(selectedSquare)
-                fromNotation = toChessNotation(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col));
-            const toNotation = toChessNotation(parseInt(square.dataset.row), parseInt(square.dataset.col));
             if (!selectedSquare && square.textContent) {
                 selectedSquare = square;
                 square.style.outline = '2px solid red';
             } 
             else if (selectedSquare) {
+                const fromNotation = toChessNotation(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col));
+                const toNotation = toChessNotation(parseInt(square.dataset.row), parseInt(square.dataset.col));
                 if (square.dataset.row === selectedSquare.dataset.row && square.dataset.col === selectedSquare.dataset.col) {
                     selectedSquare.style.outline = 'none';
                     selectedSquare = null;
