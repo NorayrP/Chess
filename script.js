@@ -59,6 +59,14 @@ boardWrapper.appendChild(boardContainer);
 const startWhitePawnRow = 6;
 const startBlackPawnRow = 1;
 
+let hasWhiteKingMoved = false;
+let hasWhiteRookKingsideMoved = false;
+let hasWhiteRookQueensideMoved = false;
+
+let hasBlackKingMoved = false;
+let hasBlackRookKingsideMoved = false;
+let hasBlackRookQueensideMoved = false;
+
 for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
         const square = document.createElement('div');
@@ -79,6 +87,10 @@ for (let row = 0; row < 8; row++) {
         }
 
         square.addEventListener('click', () => {
+            let fromNotation = "";
+            if(selectedSquare)
+                fromNotation = toChessNotation(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col));
+            const toNotation = toChessNotation(parseInt(square.dataset.row), parseInt(square.dataset.col));
             if (!selectedSquare && square.textContent) {
                 selectedSquare = square;
                 square.style.outline = '2px solid red';
@@ -90,12 +102,11 @@ for (let row = 0; row < 8; row++) {
                 }
                 else if (selectedSquare.textContent === pieces['P']) {
                     if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 1 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 1) { 
-                        debugger
-                        if (!(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) - 1)) {
+                            if (!(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) - 1)) {
                             return;
                         }
                         else if (square.textContent && checkBlackPiece(square)) {
-                            makeAMove(square, "White");
+                            makeAMove(square, "White", toNotation);
                             return;
                         }
                     }
@@ -113,7 +124,7 @@ for (let row = 0; row < 8; row++) {
                             return;
                         }
                     }
-                    makeAMove(square, "White");
+                    makeAMove(square, "White", toNotation);
                 }
                 else if (selectedSquare.textContent === pieces['p']) {
                     if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 1 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 1) { 
@@ -122,7 +133,7 @@ for (let row = 0; row < 8; row++) {
                             return;
                         }
                         else if (square.textContent && checkWhitePiece(square)) {
-                            makeAMove(square, "Black");
+                            makeAMove(square, "Black", toNotation);
                             return;
                         }
                     }
@@ -140,7 +151,7 @@ for (let row = 0; row < 8; row++) {
                             return;
                         }
                     }
-                    makeAMove(square, "Black");
+                    makeAMove(square, "Black", toNotation);
                 }
                 else if(selectedSquare.textContent === pieces['R'] || selectedSquare.textContent === pieces['r']) {
                     if(selectedSquare.dataset.row !== square.dataset.row && selectedSquare.dataset.col !== square.dataset.col)
@@ -153,7 +164,19 @@ for (let row = 0; row < 8; row++) {
                     if((selectedSquare.textContent === pieces['R'] && checkWhitePiece(square)) || (selectedSquare.textContent === pieces['r'] && checkBlackPiece(square))) {
                         return;
                     }
-                    makeAMove(square, selectedSquare.textContent === pieces['R'] ? "White" : "Black");
+                    if(selectedSquare.textContent === pieces['R'] && fromNotation === "A1") {
+                        hasWhiteRookQueensideMoved = true;
+                    }
+                    else if(selectedSquare.textContent === pieces['r'] && fromNotation === "A8") {
+                        hasBlackRookQueensideMoved = true;
+                    }
+                    else if(selectedSquare.textContent === pieces['r'] && fromNotation === "H8") {
+                        hasWhiteRookKingsideMoved = true;
+                    }
+                    else if(selectedSquare.textContent === pieces['R'] && fromNotation === "H1") {
+                        hasBlackRookKingsideMoved = true;
+                    }
+                    makeAMove(square, selectedSquare.textContent === pieces['R'] ? "White" : "Black", toNotation);
                 }
                 else if(selectedSquare.textContent === pieces['N'] || selectedSquare.textContent === pieces['n']) {
                     if(square.textContent && ((checkWhitePiece(square) && selectedSquare.textContent === pieces['N']) || (checkBlackPiece(square) && selectedSquare.textContent === pieces['n']))) {
@@ -161,28 +184,28 @@ for (let row = 0; row < 8; row++) {
                     }
                     if(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) + 2) {
                         if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 1 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 1)
-                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black");
+                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black", toNotation);
                         else {
                             return;
                         }
                     }
                     else if(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) - 2) {
                         if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 1 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 1)
-                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black");
+                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black", toNotation);
                         else {
                             return;
                         }
                     }
                     else if(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) + 1) {
                         if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 2 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 2)
-                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black");
+                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black", toNotation);
                         else {
                             return;
                         }
                     }
                     else if(parseInt(square.dataset.row) === parseInt(selectedSquare.dataset.row) - 1) {
                         if(parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) + 2 || parseInt(square.dataset.col) === parseInt(selectedSquare.dataset.col) - 2)
-                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black");
+                            makeAMove(square, selectedSquare.textContent === pieces['N'] ? "White" : "Black", toNotation);
                         else {
                             return;
                         }
@@ -201,7 +224,7 @@ for (let row = 0; row < 8; row++) {
                         return;
                     }
                     if(rowDiff === colDiff)
-                        makeAMove(square, selectedSquare.textContent === pieces['B'] ? "White" : "Black")
+                        makeAMove(square, selectedSquare.textContent === pieces['B'] ? "White" : "Black", toNotation)
                     else {
                         return;
                     }
@@ -220,9 +243,49 @@ for (let row = 0; row < 8; row++) {
                     if((selectedSquare.textContent === pieces['Q'] && checkWhitePiece(square)) || (selectedSquare.textContent === pieces['q'] && checkBlackPiece(square))) {
                         return;
                     }
-                    makeAMove(square, selectedSquare.textContent === pieces['Q'] ? "White" : "Black")
+                    makeAMove(square, selectedSquare.textContent === pieces['Q'] ? "White" : "Black", toNotation);
                 }
                 else if(selectedSquare.textContent === pieces['K'] || selectedSquare.textContent === pieces['k']) {
+                    if(selectedSquare.textContent === pieces['K'] && fromNotation === "E1" && 
+                        toNotation === "G1" && !hasWhiteKingMoved && !hasWhiteRookKingsideMoved && 
+                        isPathClear(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col), parseInt(square.dataset.row), parseInt(square.dataset.col))) {
+                        makeAMove(square, "White", toNotation);
+                        const rookSquare = boardContainer.children[parseInt(square.dataset.row) * 8 + 7];
+                        const targetRookSquare = boardContainer.children[parseInt(square.dataset.row) * 8 + 5];
+                        targetRookSquare.textContent = rookSquare.textContent;
+                        rookSquare.textContent = '';
+                        return;
+                    }
+                    else if(selectedSquare.textContent === pieces['K'] && fromNotation === "E1" && 
+                        toNotation === "C1" && !hasWhiteKingMoved && !hasWhiteRookQueensideMoved && 
+                        isPathClear(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col), parseInt(square.dataset.row), parseInt(square.dataset.col))) {
+                        makeAMove(square, "White", toNotation);
+                        const rookSquare = boardContainer.children[parseInt(square.dataset.row) * 8 + 0];
+                        const targetRookSquare = boardContainer.children[parseInt(square.dataset.row) * 8 + 3];
+                        targetRookSquare.textContent = rookSquare.textContent;
+                        rookSquare.textContent = '';
+                        return;
+                    }
+                    else if(selectedSquare.textContent === pieces['k'] && fromNotation === "E8" && 
+                        toNotation === "G8" && !hasBlackKingMoved && !hasBlackRookQueensideMoved && 
+                        isPathClear(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col), parseInt(square.dataset.row), parseInt(square.dataset.col))) {
+                        makeAMove(square, "Black", toNotation);
+                        const rookSquare = boardContainer.children[parseInt(square.dataset.row) * 1 + 7];
+                        const targetRookSquare = boardContainer.children[parseInt(square.dataset.row) * 1 + 5];
+                        targetRookSquare.textContent = rookSquare.textContent;
+                        rookSquare.textContent = '';
+                        return;
+                    }
+                    else if(selectedSquare.textContent === pieces['k'] && fromNotation === "E8" && 
+                        toNotation === "C8" && !hasBlackKingMoved && !hasBlackRookQueensideMoved && 
+                        isPathClear(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col), parseInt(square.dataset.row), parseInt(square.dataset.col))) {
+                        makeAMove(square, "Black", toNotation);
+                        const rookSquare = boardContainer.children[parseInt(square.dataset.row) * 1 + 0];
+                        const targetRookSquare = boardContainer.children[parseInt(square.dataset.row) * 1 + 3];
+                        targetRookSquare.textContent = rookSquare.textContent;
+                        rookSquare.textContent = '';
+                        return;
+                    }
                     const rowDiff = square.dataset.row > selectedSquare.dataset.row ? parseInt(square.dataset.row) - parseInt(selectedSquare.dataset.row) : parseInt(selectedSquare.dataset.row) - parseInt(square.dataset.row);
                     const colDiff = square.dataset.col > selectedSquare.dataset.col ? parseInt(square.dataset.col) - parseInt(selectedSquare.dataset.col) : parseInt(selectedSquare.dataset.col) - parseInt(square.dataset.col);
                     if(rowDiff > 1 || colDiff > 1) {
@@ -231,7 +294,13 @@ for (let row = 0; row < 8; row++) {
                     if(square.textContent && ((checkWhitePiece(square) && selectedSquare.textContent === pieces['K']) || (checkBlackPiece(square) && selectedSquare.textContent === pieces['k']))) {
                         return;
                     }
-                    makeAMove(square, selectedSquare.textContent === pieces['K'] ? "White" : "Black");
+                    if(selectedSquare.textContent === pieces['K'] && fromNotation === "E1") {
+                        hasWhiteKingMoved = true;
+                    }
+                    else if(selectedSquare.textContent === pieces['k'] && fromNotation === "E8") {
+                        hasBlackKingMoved = true;
+                    }
+                    makeAMove(square, selectedSquare.textContent === pieces['K'] ? "White" : "Black", toNotation);
                 }
             }
         });
@@ -264,15 +333,13 @@ function toChessNotation(row, col) {
     return file + rank;
 }
 
-function makeAMove(square, lastMovedColor){
+function makeAMove(square, lastMovedColor, toNotation){
     if ((!lastMoved && lastMovedColor === "Black") || lastMovedColor === lastMoved) {
         alert("Wrong move order");
         return;
     }
 
-    const fromNotation = toChessNotation(parseInt(selectedSquare.dataset.row), parseInt(selectedSquare.dataset.col));
-    const toNotation = toChessNotation(parseInt(square.dataset.row), parseInt(square.dataset.col));
-    const moveNotation = selectedSquare.textContent + toNotation; // simplified, can add capture notation later
+    const moveNotation = selectedSquare.textContent + toNotation;
 
     if (lastMovedColor === "White") {
         moveHistory.push({ white: moveNotation, black: "" });
