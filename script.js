@@ -64,7 +64,6 @@ boardContainer.style.gridTemplateColumns = 'repeat(8, 60px)';
 boardContainer.style.gridTemplateRows = 'repeat(8, 60px)';
 boardContainer.style.width = '480px';
 boardContainer.style.border = '2px solid black';
-boardContainer.style.margin = '0 0 0 6px';
 boardContainer.style.position = 'relative';
 boardContainer.style.left = '15px';
 boardWrapper.appendChild(boardContainer);
